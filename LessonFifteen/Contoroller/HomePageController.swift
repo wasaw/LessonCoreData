@@ -13,10 +13,13 @@ class HomePageController: UIViewController {
     private var tableView: UITableView?
     private let searchBar = UISearchBar(frame: .zero)
     private var selectedCellId: Int?
-    private var lastCell: TableCell?
+    private weak var lastCell: TableCell?
     
     private var profiles: [OutputData] = []
     private var imageStringArray: [String] = []
+    
+    private let groupProfileImages = DispatchGroup()
+    private let groupWorkImages = DispatchGroup()
         
 //    MARK: - Lifecycle
     
@@ -27,12 +30,7 @@ class HomePageController: UIViewController {
         configureUI()
         view.backgroundColor = .background
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        DatabaseService.shared.saveInformation(profiles: profiles)
-    }
-    
+ 
 //    MARK: - Helpers
     
     private func isFirstLaunce() {
@@ -56,24 +54,36 @@ class HomePageController: UIViewController {
                 let user = OutputData(userName: item.user.name, profileImg: UIImage(), workImage: UIImage(), previewPhoto: item.preview_photos[0])
                 self.profiles.append(user)
             }
-            var index = 0
-            for item in self.imageStringArray {
+            
+            for i in 0..<self.imageStringArray.count {
+                self.groupProfileImages.enter()
+                let item = self.imageStringArray[i]
+
                 NetworkService.shared.downloadImg(urlString: item) { data in
                     guard let img = UIImage(data: data) else { return }
-                    self.profiles[index].profileImg = img
-                    index += 1
+                    self.profiles[i].profileImg = img
+                    self.groupProfileImages.leave()
                 }
-            
             }
-                var secondIndex = 0
-                for item in self.profiles {
+            
+            self.groupProfileImages.notify(queue: DispatchQueue.global()) {
+                
+                for i in 0..<self.profiles.count {
+                    self.groupWorkImages.enter()
+                    let item = self.profiles[i]
+                    
                     NetworkService.shared.downloadImg(urlString: item.previewPhoto.urls.small) { data in
                         guard let img = UIImage(data: data) else { return }
-                        self.profiles[secondIndex].workImage = img
-                        secondIndex += 1
+                        self.profiles[i].workImage = img
+                        self.groupWorkImages.leave()
                     }
                 }
-                self.tableView?.reloadData()
+                
+                self.groupWorkImages.notify(queue: DispatchQueue.main) {
+                    self.tableView?.reloadData()
+                    DatabaseService.shared.saveInformation(profiles: self.profiles)
+                }
+            }
         }
     }
     
@@ -170,6 +180,8 @@ extension HomePageController: UISearchBarDelegate {
         let loadProfiles = DatabaseService.shared.loadInformation()
         guard let loadProfiles = loadProfiles else { return }
         self.profiles = loadProfiles
+        self.selectedCellId = nil
+        self.lastCell?.hide()
         self.tableView?.reloadData()
         view.endEditing(true)
     }

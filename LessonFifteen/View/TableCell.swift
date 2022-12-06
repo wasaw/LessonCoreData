@@ -74,10 +74,10 @@ class TableCell: UITableViewCell {
         stack.rightAnchor.constraint(equalTo: rightAnchor, constant: -25).isActive = true
     }
     
-    func setInformation(cellNumber: Int, profile: OutputData) {
+    func setInformation(cellNumber: Int, profile: Profile) {
         numberLabel.text = String(cellNumber)
         userNameLabel.text = profile.userName
-        avatarImageView.image = profile.profileImg
+        avatarImageView.image = profile.profileImage
         if cellNumber % 2 == 0 {
             backgroundColor = .background
         } else {

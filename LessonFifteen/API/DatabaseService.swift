@@ -31,13 +31,13 @@ class DatabaseService {
         return false
     }
     
-    func saveInformation(profiles: [OutputData]) {
+    func saveInformation(profiles: [Profile]) {
         let context = appDelegate.persistentContainer.viewContext
         guard let entity = NSEntityDescription.entity(forEntityName: "Profiles", in: context) else { return }
         for item in profiles {
             let newRecord = NSManagedObject(entity: entity, insertInto: context)
             newRecord.setValue(item.userName, forKey: "name")
-            let imgData = item.profileImg.jpegData(compressionQuality: 1.0)
+            let imgData = item.profileImage.jpegData(compressionQuality: 1.0)
             newRecord.setValue(imgData, forKey: "profileImage")
             let workImgData = item.workImage.jpegData(compressionQuality: 1.0)
             newRecord.setValue(workImgData, forKey: "workImage")
@@ -49,13 +49,13 @@ class DatabaseService {
         }
     }
     
-    func loadInformation() -> [OutputData]?{
+    func loadInformation() -> [Profile]?{
         let context = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Profiles")
         
         do {
             let result = try context.fetch(fetchRequest)
-            var profiles: [OutputData] = []
+            var profiles: [Profile] = []
             for data in result {
                 let profileImageData = data.value(forKey: "profileImage") as? Data
                 guard let profileImageData = profileImageData else { return nil }
@@ -69,7 +69,7 @@ class DatabaseService {
                 
                 let name = data.value(forKey: "name") as? String ?? ""
                 let imgURl = ImageUrl(raw: "", full: "", regular: "", small: "", thumb: "", small_s3: "")
-                let profile = OutputData(userName: name, profileImg: profileImage, workImage: workImage, previewPhoto: PreviewPhoto(id: "", urls: imgURl))
+                let profile = Profile(userName: name, profileImage: profileImage, workImage: workImage)
                 profiles.append(profile)
             }
             return profiles
@@ -79,7 +79,7 @@ class DatabaseService {
         return nil
     }
     
-    func searchInDB(_ searchItem: String) -> [OutputData]? {
+    func searchInDB(_ searchItem: String) -> [Profile]? {
         let context = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Profiles")
         fetchRequest.predicate = NSPredicate(format: "ANY name CONTAINS %@", searchItem)
@@ -89,7 +89,7 @@ class DatabaseService {
             if result.isEmpty {
                 return nil
             } else {
-                var profiles: [OutputData] = []
+                var profiles: [Profile] = []
                 for data in result {
                     if let data = data as? NSManagedObject {
                         let profileImageData = data.value(forKey: "profileImage") as? Data
@@ -104,7 +104,7 @@ class DatabaseService {
                         
                         let name = data.value(forKey: "name") as? String ?? ""
                         let imgURl = ImageUrl(raw: "", full: "", regular: "", small: "", thumb: "", small_s3: "")
-                        let profile = OutputData(userName: name, profileImg: profileImage, workImage: workImage, previewPhoto: PreviewPhoto(id: "", urls: imgURl))
+                        let profile = Profile(userName: name, profileImage: profileImage, workImage: workImage)
                         profiles.append(profile)
                     }
                 }

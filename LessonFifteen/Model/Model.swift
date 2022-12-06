@@ -7,11 +7,18 @@
 
 import UIKit
 
-struct OutputData {
+struct InputData {
     let userName: String
-    var profileImg: UIImage
-    var workImage: UIImage
+    let imageProfileString: String
+    var profileImg: UIImage?
+    var workImage: UIImage?
     let previewPhoto: PreviewPhoto
+}
+
+struct Profile {
+    let userName: String
+    let profileImage: UIImage
+    let workImage: UIImage
 }
 
 //  MARK: - Codable

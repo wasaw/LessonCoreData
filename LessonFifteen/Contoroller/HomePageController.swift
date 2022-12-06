@@ -15,8 +15,8 @@ class HomePageController: UIViewController {
     private var selectedCellId: Int?
     private weak var lastCell: TableCell?
     
-    private var profiles: [OutputData] = []
-    private var imageStringArray: [String] = []
+    private var inputData: [InputData] = []
+    private var profiles: [Profile] = []
     
     private let groupProfileImages = DispatchGroup()
     private let groupWorkImages = DispatchGroup()
@@ -50,31 +50,34 @@ class HomePageController: UIViewController {
         NetworkService.shared.request(requestType: .collections, metod: .get) { response in
             guard let response = response else { return }
             for item in response {
-                self.imageStringArray.append(item.user.profile_image.small)
-                let user = OutputData(userName: item.user.name, profileImg: UIImage(), workImage: UIImage(), previewPhoto: item.preview_photos[0])
-                self.profiles.append(user)
+                let OutputData = InputData(userName: item.user.name, imageProfileString: item.user.profile_image.small, previewPhoto: item.preview_photos[0])
+                self.inputData.append(OutputData)
             }
-            
-            for i in 0..<self.imageStringArray.count {
+                        
+            for i in 0..<self.inputData.count {
                 self.groupProfileImages.enter()
-                let item = self.imageStringArray[i]
+                let item = self.inputData[i].imageProfileString
 
                 NetworkService.shared.downloadImg(urlString: item) { data in
                     guard let img = UIImage(data: data) else { return }
-                    self.profiles[i].profileImg = img
+                    self.inputData[i].profileImg = img
                     self.groupProfileImages.leave()
                 }
             }
             
             self.groupProfileImages.notify(queue: DispatchQueue.global()) {
                 
-                for i in 0..<self.profiles.count {
+                for i in 0..<self.inputData.count {
                     self.groupWorkImages.enter()
-                    let item = self.profiles[i]
+                    let item = self.inputData[i].previewPhoto.urls.small
                     
-                    NetworkService.shared.downloadImg(urlString: item.previewPhoto.urls.small) { data in
+                    NetworkService.shared.downloadImg(urlString: item) { data in
                         guard let img = UIImage(data: data) else { return }
-                        self.profiles[i].workImage = img
+                        self.inputData[i].workImage = img
+                        guard let profileImage = self.inputData[i].profileImg else { return }
+                        guard let workImage = self.inputData[i].workImage else { return }
+                        let profile = Profile(userName: self.inputData[i].userName, profileImage: profileImage, workImage: workImage)
+                        self.profiles.append(profile)
                         self.groupWorkImages.leave()
                     }
                 }

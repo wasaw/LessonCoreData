@@ -19,7 +19,7 @@
 		BB60D4DB293650D700C4B106 /* NetworkConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB60D4DA293650D700C4B106 /* NetworkConfiguration.swift */; };
 		BB7390FC293749E8008256F2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7390FB293749E8008256F2 /* Extensions.swift */; };
 		BB7391022937A2A4008256F2 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BB7391002937A2A4008256F2 /* Model.xcdatamodeld */; };
-		BB7391042937A41D008256F2 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7391032937A41D008256F2 /* DatabaseService.swift */; };
+		BB9BB087293F3A8100DC6972 /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9BB086293F3A8100DC6972 /* UserDefaultsService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,7 +38,7 @@
 		BB6E754E293A7B9900887665 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		BB7390FB293749E8008256F2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		BB7391012937A2A4008256F2 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		BB7391032937A41D008256F2 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
+		BB9BB086293F3A8100DC6972 /* UserDefaultsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +116,7 @@
 			children = (
 				BB60D4D32936409D00C4B106 /* NetworkService.swift */,
 				BB60D4DA293650D700C4B106 /* NetworkConfiguration.swift */,
-				BB7391032937A41D008256F2 /* DatabaseService.swift */,
+				BB9BB086293F3A8100DC6972 /* UserDefaultsService.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -208,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB9BB087293F3A8100DC6972 /* UserDefaultsService.swift in Sources */,
 				BB60D4D42936409D00C4B106 /* NetworkService.swift in Sources */,
 				BB7390FC293749E8008256F2 /* Extensions.swift in Sources */,
 				BB60D4B7293624E100C4B106 /* AppDelegate.swift in Sources */,
@@ -218,7 +219,6 @@
 				BB7391022937A2A4008256F2 /* Model.xcdatamodeld in Sources */,
 				BB60D4CF2936267500C4B106 /* HomePageController.swift in Sources */,
 				BB60D4DB293650D700C4B106 /* NetworkConfiguration.swift in Sources */,
-				BB7391042937A41D008256F2 /* DatabaseService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

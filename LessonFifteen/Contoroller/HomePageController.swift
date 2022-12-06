@@ -35,10 +35,10 @@ class HomePageController: UIViewController {
     
     private func isFirstLaunce() {
         DispatchQueue.main.async {
-            if DatabaseService.shared.firstLaunch() {
+            if UserDefaultsService.shared.firstLaunce() {
                 self.loadNetworkInformation()
             } else {
-                let loadProfiles = DatabaseService.shared.loadInformation()
+                let loadProfiles = UserDefaultsService.shared.loadInformation()
                 guard let loadProfiles = loadProfiles else { return }
                 self.profiles = loadProfiles
                 self.tableView?.reloadData()
@@ -83,8 +83,8 @@ class HomePageController: UIViewController {
                 }
                 
                 self.groupWorkImages.notify(queue: DispatchQueue.main) {
+                    UserDefaultsService.shared.saveInformation(profiles: self.profiles)
                     self.tableView?.reloadData()
-                    DatabaseService.shared.saveInformation(profiles: self.profiles)
                 }
             }
         }
@@ -173,14 +173,15 @@ extension HomePageController: UITableViewDataSource {
 extension HomePageController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text else { return }
-        let loadProfiles = DatabaseService.shared.searchInDB(text)
+        let loadProfiles = UserDefaultsService.shared.search(searchName: text)
         guard let loadProfiles = loadProfiles else { return }
-        self.profiles = loadProfiles
+        self.profiles = []
+        self.profiles.append(loadProfiles)
         self.tableView?.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        let loadProfiles = DatabaseService.shared.loadInformation()
+        let loadProfiles = UserDefaultsService.shared.loadInformation()
         guard let loadProfiles = loadProfiles else { return }
         self.profiles = loadProfiles
         self.selectedCellId = nil

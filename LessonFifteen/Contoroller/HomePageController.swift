@@ -20,6 +20,12 @@ class HomePageController: UIViewController {
     
     private let groupProfileImages = DispatchGroup()
     private let groupWorkImages = DispatchGroup()
+    
+    private let loadAnimateView = UIView()
+    private let yellowAnimateView = UIView()
+    private let cianAnimateView = UIView()
+    private let blueAnimateView = UIView()
+    private let purpleAnimateView = UIView()
         
 //    MARK: - Lifecycle
     
@@ -34,7 +40,7 @@ class HomePageController: UIViewController {
 //    MARK: - Helpers
     
     private func isFirstLaunce() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
             if DatabaseService.shared.firstLaunch() {
                 self.loadNetworkInformation()
             } else {
@@ -43,6 +49,7 @@ class HomePageController: UIViewController {
                 self.profiles = loadProfiles
                 self.tableView?.reloadData()
             }
+            self.loadAnimateView.isHidden = true
         }
     }
     
@@ -123,6 +130,71 @@ class HomePageController: UIViewController {
         tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         tableView.heightAnchor.constraint(equalToConstant: 720).isActive = true
         tableView.backgroundColor = .background
+        configLoadAnimationView()
+    }
+    
+    private func configLoadAnimationView() {
+        guard let tableView = tableView else { return }
+        tableView.addSubview(loadAnimateView)
+        loadAnimateView.translatesAutoresizingMaskIntoConstraints = false
+        loadAnimateView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor).isActive = true
+        loadAnimateView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 10).isActive = true
+        loadAnimateView.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        loadAnimateView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        
+        lineAnimate()
+    }
+    
+    private func lineAnimate() {
+        loadAnimateView.addSubview(yellowAnimateView)
+        yellowAnimateView.translatesAutoresizingMaskIntoConstraints = false
+        yellowAnimateView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        yellowAnimateView.topAnchor.constraint(equalTo: loadAnimateView.topAnchor).isActive = true
+        yellowAnimateView.widthAnchor.constraint(equalToConstant: 10).isActive = true
+        yellowAnimateView.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        yellowAnimateView.backgroundColor = .yellow
+        
+        loadAnimateView.addSubview(cianAnimateView)
+        cianAnimateView.translatesAutoresizingMaskIntoConstraints = false
+        cianAnimateView.centerYAnchor.constraint(equalTo: loadAnimateView.centerYAnchor).isActive = true
+        cianAnimateView.leftAnchor.constraint(equalTo: loadAnimateView.leftAnchor).isActive = true
+        cianAnimateView.widthAnchor.constraint(equalToConstant: 10).isActive = true
+        cianAnimateView.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        cianAnimateView.backgroundColor = .cyan
+        
+        loadAnimateView.addSubview(blueAnimateView)
+        blueAnimateView.translatesAutoresizingMaskIntoConstraints = false
+        blueAnimateView.centerYAnchor.constraint(equalTo: loadAnimateView.centerYAnchor).isActive = true
+        blueAnimateView.rightAnchor.constraint(equalTo: loadAnimateView.rightAnchor).isActive = true
+        blueAnimateView.widthAnchor.constraint(equalToConstant: 10).isActive = true
+        blueAnimateView.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        blueAnimateView.backgroundColor = .blue
+        
+        loadAnimateView.addSubview(purpleAnimateView)
+        purpleAnimateView.translatesAutoresizingMaskIntoConstraints = false
+        purpleAnimateView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        purpleAnimateView.bottomAnchor.constraint(equalTo: loadAnimateView.bottomAnchor).isActive = true
+        purpleAnimateView.widthAnchor.constraint(equalToConstant: 10).isActive = true
+        purpleAnimateView.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        purpleAnimateView.backgroundColor = .purple
+        
+        let animationYellow = createAnimation("position.y")
+        let animationCian = createAnimation("position.x")
+        let animationBlue = createAnimation("position.x")
+        let animationPurple = createAnimation("position.y")
+
+        yellowAnimateView.layer.add(animationYellow, forKey: nil)
+        cianAnimateView.layer.add(animationCian, forKey: nil)
+        blueAnimateView.layer.add(animationBlue, forKey: nil)
+        purpleAnimateView.layer.add(animationPurple, forKey: nil)
+    }
+    
+    func createAnimation(_ keyPath: String) -> CABasicAnimation {
+        let animation = CABasicAnimation(keyPath: keyPath)
+        animation.duration = 2
+        animation.toValue = 30
+        animation.repeatCount = .infinity
+        return animation
     }
 }
 
